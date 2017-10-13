@@ -609,6 +609,8 @@ GET /libreria/libros/_search
 
 Boost. En un query booleano el parametro boost da mas peso a la consulta donde es aplicado
 en este caso aue un documento tenga el color amarillo hara que su puntaje o score sea mayor.
+Con la instruccion highlight se van a resaltar en los resultados los campos que hicieron match
+en la consulta. Especificamente que parte del titulo oque parte de los colores hizo match.
 
 #### CONSULTA
 ```json
@@ -1744,7 +1746,7 @@ POST /libreria/libros/1
 }
 ```
 
-Utilizando la clausula _update pode,os actualizar un campo especifico de un documento: en este caso el titulo 
+Utilizando la clausula _update podemos actualizar un campo especifico de un documento: en este caso el titulo 
 
 #### CONSULTA
 ```json
