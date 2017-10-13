@@ -1,0 +1,386 @@
+
+#obtener todos los docu,entos en elasticsearch
+```
+GET /
+```
+
+#insertar documento primero indice luego typo y luego identificador del documento
+```
+POST /my-indice/mi-tipo/1
+{
+  "body":"loquesea"
+}
+```
+#consultar documento recien creado
+GET /my-indice/mi-tipo/1
+
+#eliminar documento
+DELETE /my-index/my-type/1
+
+
+PUT /libreria
+{
+  "settings": {
+    "index.number_of_shards":1,
+    "index.number_of_replicas":0
+  }
+}
+
+POST /libreria/libros/_bulk
+{ "index": {"_id": 1}}
+{ "titulo": "el libro 1", "precio": 10, "colores":["gris","purpura","azul"]}
+{ "index": {"_id": 2}}
+{ "titulo": "el libro 2", "precio": 12, "colores":["purpura","azul"]}
+{ "index": {"_id": 3}}
+{ "titulo": "el libro 1", "precio": 10, "colores":["gris","purpura","azul"]}
+
+POST /libreria/libros/_bulk
+{ "index": {"_id": 4}}
+{ "titulo": "el libro 4", "precio": 13, "colores":["amarillo"]}
+{ "index": {"_id": 5}}
+{ "titulo": "el libro 5", "precio": 9, "colores":["profundo azul"]}
+
+
+
+GET /libreria/libros/_search
+
+GET /libreria/libros/_search
+{
+  "query":   {
+    "match": {
+      "_id": 3
+    }
+  }
+}
+
+GET /libreria/libros/_search
+{
+  "query":   {
+    "match": {
+      "titulo": "5 2"
+    }
+  }
+}
+
+GET /libreria/libros/_search
+{
+  "query":   {
+    "match_phrase": {
+      "titulo": "libro 5"
+    }
+  }
+}
+
+#los resultados son ranqueados por el campo relevance _score
+
+#query booleano o bool query
+
+GET /libreria/libros/_search
+{
+  "query": {
+    "bool": {
+     "must": [
+       {
+         "match": {
+           "titulo": "el"
+         }},
+         {"match_phrase":  {
+             "titulo": "libro 4"
+           }
+         }
+       
+     ] 
+    }
+  }
+}
+
+
+
+GET /libreria/libros/_search
+{
+  "query": {
+    "bool": {
+     "must_not": [
+       {
+         "match": {
+           "titulo": "1"
+         }},
+         {"match_phrase":  {
+             "titulo": "libro 4"
+           }
+         }
+       
+     ] 
+    }
+  }
+}
+
+
+#Boost makes el query weight more against el oelr queries in a should request
+GET /libreria/libros/_search
+{
+  "query": {
+    "bool": {
+     "should": [
+       {
+         "match_phrase": {
+           "titulo": "5"
+         }},
+         {"match_phrase":  {
+             "colores": {
+               "query":"amarillo",
+               "boost": 3 
+           }
+         }},
+       {"match_phrase":  {
+             "colores": "profundo"
+           }
+         }
+     ] 
+    }
+  }
+  ,
+  "highlight":{
+    "fields":{
+      "titulo": {},
+      "colores":{}
+    }
+  }
+}
+
+
+GET /libreria/libros/_search
+{
+  "query": {
+    "bool": {
+     "must": [
+       {
+         "match": {
+           "titulo": "el libro"
+         }}
+     ], 
+     "filter" :  
+  {
+    "range":{
+      "precio":{
+        "gte" : 10,
+        "lte" : 12
+      }
+    }
+}
+    }
+  }
+  
+}
+
+
+GET /libreria/libros/_search
+{
+  "query": {
+    "bool": {
+     
+     "filter" :  
+  {
+    "range":{
+      "precio":{
+        "gte" : 11,
+        "lte" : 14
+      }
+    }
+}
+    }
+  }
+  
+}
+
+GET /libreria/_analyze
+{
+  "tokenizer":"standard",
+  "text":"Juan valdez juan cafe 1"
+}
+
+GET /libreria/_analyze
+{
+  "tokenizer":"standard",
+  "filter": ["lowercase"], 
+  "text":"Juan valdez juan cafe 1"
+}
+
+GET /libreria/_analyze
+{
+  "tokenizer":"standard",
+  "filter": ["lowercase", "unique"], 
+  "text":"Juan Valdez juan cafe juan juan 1"
+}
+
+GET /libreria/_analyze
+{
+  "analyzer":"standard",
+  "text":"Juan Valdez juan cafe juan juan 1"
+}
+#Salta simbolos como $ o @ y no separa por el punto.
+GET /libreria/_analyze
+{
+  "tokenizer":"standard",
+  "text":"Juan.Valdez juan cafe! $1 @9514"
+}
+
+#skips everything that is not a letter
+GET /libreria/_analyze
+{
+  "tokenizer":"letter",
+  "filter": ["lowercase"], 
+  "text":"Juan.Valdez juan cafe! $1 @9514a"
+}
+
+#Emails or website with standard tokenizer misses @ or //
+GET /libreria/_analyze
+{
+  "tokenizer":"uax_url_email",
+  "text":"fulanito@email.com website: http://fulanitoswebsite.com"
+}
+
+#Aggregations can be used to explore data
+GET /libreria/_search
+{
+  "size":0,
+  "aggs":{
+    "colores-populares": 
+    {
+      "terms": {
+        "field": "colores.keyword"
+      }
+    }
+  }
+}
+
+#query and aggregations
+#We get aggregations for el documents that
+#match el query
+GET /libreria/_search
+{
+  "query":   {
+    "match": {
+      "titulo": "libro"
+    }
+  },
+  "aggs":{
+    "colores-populares": 
+    {
+      "terms": {
+        "field": "colores.keyword"
+      }
+    }
+  }
+}
+
+#obtener una agregacion por precio
+GET /libreria/_search
+{
+  "query":   {
+    "match": {
+      "titulo": "libro"
+    }
+  },
+  "aggs":{
+    "precio promedio": 
+    {
+      "avg": {
+        "field": "precio"
+      }
+    }
+  }
+}
+#agregacion anidada precio promedio por color
+
+GET /libreria/_search
+{
+  "query":   {
+    "match": {
+      "titulo": "libro"
+    }
+  },
+  "aggs":{
+    "colores-populares": 
+    {
+      "terms": {
+        "field": "colores.keyword"
+      },
+      "aggs":{
+    "precio promedio": 
+    {
+      "avg": {
+        "field": "precio"
+      }
+    }
+  }
+    }
+  }
+  
+}
+
+#Actualizar documentos
+POST /libreria/libros/1
+{ "titulo": "el libro 1 updated", "precio": 11, "colores":["gris","purpura","azul","black"]}
+
+#Instruccion para actualizar
+POST /libreria/libros/2/_update
+{"doc":{"titulo": "el libro dos"}}
+
+#Elastic search no es tiene schemas
+#Tratara de inferir de un docu,ento si es un long un flotante o un double
+
+GET /libreria/_mapping
+
+PUT /libreros-famosos
+{
+  "settings": {
+    "index" : {
+      "number_of_shards": 2,
+      "number_of_replicas": 0,
+      "analysis": {
+        "analyzer": {
+          "my-desc-analyzer": {
+            "type": "custom",
+            "tokenizer": "uax_url_email",
+            "filters": ["lowercase"]
+          }
+        }
+      }
+    }
+  },
+  "mappings":  {
+    "librero": {
+      "properties": {
+        "nombre": {
+          "type": "text"
+        },
+        "colores_favoritos": {
+          "type": "keyword"
+          
+        },
+        "birth-date": {
+          "type": "date",
+          "format": "year_month_day"
+        },
+        "lugar_de_nacimiento": {
+          "type": "geo_point"
+        },
+        "descripcion": {
+          "type": "text",
+          "analyzer": "my-desc-analyzer"
+        }
+      }
+    }
+  }
+}
+
+PUT /libreros-famosos/librero/1
+{
+  "nombre": "Carlos Mario Gomez",
+  "colores_favoritos": ["amarillo","azul-clarito"],
+  "lugar_de_nacimiento": {
+    "lat":4.71189157,
+    "lon":-74.04034138
+  },
+"descripcion":"Una descripcion inventada de un señor que no existe."
