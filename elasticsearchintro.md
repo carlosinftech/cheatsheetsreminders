@@ -2,8 +2,22 @@ Obtener todos los documentos en elasticsearch
 ``` json
 GET /
 ```
-## RESULTADO
-
+#### RESULTADO
+``` json
+{
+  "name": "L3OsxNQ",
+  "cluster_name": "elasticsearch",
+  "cluster_uuid": "SRYoS_jSTqqXJUvHLECHHw",
+  "version": {
+    "number": "5.6.3",
+    "build_hash": "1a2f265",
+    "build_date": "2017-10-06T20:33:39.012Z",
+    "build_snapshot": false,
+    "lucene_version": "6.6.1"
+  },
+  "tagline": "You Know, for Search"
+}
+```
 
 Insertar documento primero indice luego typo y luego identificador del documento
 ```json
@@ -12,13 +26,59 @@ POST /my-indice/mi-tipo/1
   "body":"loquesea"
 }
 ```
+
+#### RESULTADO
+``` json
+{
+  "_index": "my-indice",
+  "_type": "mi-tipo",
+  "_id": "1",
+  "_version": 1,
+  "result": "created",
+  "_shards": {
+    "total": 2,
+    "successful": 1,
+    "failed": 0
+  },
+  "created": true
+}
+```
 Consultar documento recien creado
 ```json
 GET /my-indice/mi-tipo/1
 ```
+#### RESULTADO
+``` json
+{
+  "_index": "my-indice",
+  "_type": "mi-tipo",
+  "_id": "1",
+  "_version": 1,
+  "found": true,
+  "_source": {
+    "body": "loquesea"
+  }
+}
+```
 Eliminar documento
 ```json
 DELETE /my-index/my-type/1
+```
+#### RESULTADO
+``` json
+{
+  "found": true,
+  "_index": "my-index",
+  "_type": "my-type",
+  "_id": "1",
+  "_version": 2,
+  "result": "deleted",
+  "_shards": {
+    "total": 2,
+    "successful": 1,
+    "failed": 0
+  }
+}
 ```
 
 Crear un nuevo indice con parametros de configuracion
@@ -31,7 +91,14 @@ PUT /libreria
   }
 }
 ```
-
+#### RESULTADO
+``` json
+{
+  "acknowledged": true,
+  "shards_acknowledged": true,
+  "index": "libreria"
+}
+```
 Agregar varios documentos de una sola vez
 ```json
 POST /libreria/libros/_bulk
@@ -42,7 +109,63 @@ POST /libreria/libros/_bulk
 { "index": {"_id": 3}}
 { "titulo": "el libro 1", "precio": 10, "colores":["gris","purpura","azul"]}
 ```
-
+#### RESULTADO
+``` json
+{
+  "took": 137,
+  "errors": false,
+  "items": [
+    {
+      "index": {
+        "_index": "libreria",
+        "_type": "libros",
+        "_id": "1",
+        "_version": 1,
+        "result": "created",
+        "_shards": {
+          "total": 1,
+          "successful": 1,
+          "failed": 0
+        },
+        "created": true,
+        "status": 201
+      }
+    },
+    {
+      "index": {
+        "_index": "libreria",
+        "_type": "libros",
+        "_id": "2",
+        "_version": 1,
+        "result": "created",
+        "_shards": {
+          "total": 1,
+          "successful": 1,
+          "failed": 0
+        },
+        "created": true,
+        "status": 201
+      }
+    },
+    {
+      "index": {
+        "_index": "libreria",
+        "_type": "libros",
+        "_id": "3",
+        "_version": 1,
+        "result": "created",
+        "_shards": {
+          "total": 1,
+          "successful": 1,
+          "failed": 0
+        },
+        "created": true,
+        "status": 201
+      }
+    }
+  ]
+}
+```
 Agregar mas docu,entos
 
 ```json
@@ -52,12 +175,140 @@ POST /libreria/libros/_bulk
 { "index": {"_id": 5}}
 { "titulo": "el libro 5", "precio": 9, "colores":["profundo azul"]}
 ```
-
+#### RESULTADO
+``` json
+{
+  "took": 68,
+  "errors": false,
+  "items": [
+    {
+      "index": {
+        "_index": "libreria",
+        "_type": "libros",
+        "_id": "4",
+        "_version": 1,
+        "result": "created",
+        "_shards": {
+          "total": 1,
+          "successful": 1,
+          "failed": 0
+        },
+        "created": true,
+        "status": 201
+      }
+    },
+    {
+      "index": {
+        "_index": "libreria",
+        "_type": "libros",
+        "_id": "5",
+        "_version": 1,
+        "result": "created",
+        "_shards": {
+          "total": 1,
+          "successful": 1,
+          "failed": 0
+        },
+        "created": true,
+        "status": 201
+      }
+    }
+  ]
+}
+```
 Obtener todos los documentos del indice libreria y de tipo libros
 ```json
 GET /libreria/libros/_search
 ```
-
+#### RESULTADO
+``` json
+{
+  "took": 0,
+  "timed_out": false,
+  "_shards": {
+    "total": 1,
+    "successful": 1,
+    "skipped": 0,
+    "failed": 0
+  },
+  "hits": {
+    "total": 5,
+    "max_score": 1,
+    "hits": [
+      {
+        "_index": "libreria",
+        "_type": "libros",
+        "_id": "1",
+        "_score": 1,
+        "_source": {
+          "titulo": "el libro 1",
+          "precio": 10,
+          "colores": [
+            "gris",
+            "purpura",
+            "azul"
+          ]
+        }
+      },
+      {
+        "_index": "libreria",
+        "_type": "libros",
+        "_id": "2",
+        "_score": 1,
+        "_source": {
+          "titulo": "el libro 2",
+          "precio": 12,
+          "colores": [
+            "purpura",
+            "azul"
+          ]
+        }
+      },
+      {
+        "_index": "libreria",
+        "_type": "libros",
+        "_id": "3",
+        "_score": 1,
+        "_source": {
+          "titulo": "el libro 1",
+          "precio": 10,
+          "colores": [
+            "gris",
+            "purpura",
+            "azul"
+          ]
+        }
+      },
+      {
+        "_index": "libreria",
+        "_type": "libros",
+        "_id": "4",
+        "_score": 1,
+        "_source": {
+          "titulo": "el libro 4",
+          "precio": 13,
+          "colores": [
+            "amarillo"
+          ]
+        }
+      },
+      {
+        "_index": "libreria",
+        "_type": "libros",
+        "_id": "5",
+        "_score": 1,
+        "_source": {
+          "titulo": "el libro 5",
+          "precio": 9,
+          "colores": [
+            "profundo azul"
+          ]
+        }
+      }
+    ]
+  }
+}
+```
 Obtener todos los documentos del indice libreria y de tipo libros cuyo indice contenga el numero 3
 ```json
 GET /libreria/libros/_search
@@ -69,7 +320,40 @@ GET /libreria/libros/_search
   }
 }
 ```
-
+#### RESULTADO
+``` json
+{
+  "took": 0,
+  "timed_out": false,
+  "_shards": {
+    "total": 1,
+    "successful": 1,
+    "skipped": 0,
+    "failed": 0
+  },
+  "hits": {
+    "total": 1,
+    "max_score": 1,
+    "hits": [
+      {
+        "_index": "libreria",
+        "_type": "libros",
+        "_id": "3",
+        "_score": 1,
+        "_source": {
+          "titulo": "el libro 1",
+          "precio": 10,
+          "colores": [
+            "gris",
+            "purpura",
+            "azul"
+          ]
+        }
+      }
+    ]
+  }
+}
+```
 Obtener todos los documentos cuyo indice tenga los numeros 5 o 2
 ```json
 GET /libreria/libros/_search
@@ -81,7 +365,52 @@ GET /libreria/libros/_search
   }
 }
 ```
-
+#### RESULTADO
+``` json
+{
+  "took": 0,
+  "timed_out": false,
+  "_shards": {
+    "total": 1,
+    "successful": 1,
+    "skipped": 0,
+    "failed": 0
+  },
+  "hits": {
+    "total": 2,
+    "max_score": 1.219939,
+    "hits": [
+      {
+        "_index": "libreria",
+        "_type": "libros",
+        "_id": "2",
+        "_score": 1.219939,
+        "_source": {
+          "titulo": "el libro 2",
+          "precio": 12,
+          "colores": [
+            "purpura",
+            "azul"
+          ]
+        }
+      },
+      {
+        "_index": "libreria",
+        "_type": "libros",
+        "_id": "5",
+        "_score": 1.219939,
+        "_source": {
+          "titulo": "el libro 5",
+          "precio": 9,
+          "colores": [
+            "profundo azul"
+          ]
+        }
+      }
+    ]
+  }
+}
+```
 Obtener todos los documentos cuyo titulo contenga exactamente la cadena "libro 5"
 ```json
 GET /libreria/libros/_search
@@ -93,7 +422,38 @@ GET /libreria/libros/_search
   }
 }
 ```
-
+#### RESULTADO
+``` json
+{
+  "took": 0,
+  "timed_out": false,
+  "_shards": {
+    "total": 1,
+    "successful": 1,
+    "skipped": 0,
+    "failed": 0
+  },
+  "hits": {
+    "total": 1,
+    "max_score": 1.296509,
+    "hits": [
+      {
+        "_index": "libreria",
+        "_type": "libros",
+        "_id": "5",
+        "_score": 1.296509,
+        "_source": {
+          "titulo": "el libro 5",
+          "precio": 9,
+          "colores": [
+            "profundo azul"
+          ]
+        }
+      }
+    ]
+  }
+}
+```
 Los resultados son ranqueados por el campo relevance _score
 
 Query booleano/ Obtiene los documentos que contengan en su titulo la palabra el
@@ -118,7 +478,38 @@ GET /libreria/libros/_search
   }
 }
 ```
-
+#### RESULTADO
+``` json
+{
+  "took": 1,
+  "timed_out": false,
+  "_shards": {
+    "total": 1,
+    "successful": 1,
+    "skipped": 0,
+    "failed": 0
+  },
+  "hits": {
+    "total": 1,
+    "max_score": 1.3730791,
+    "hits": [
+      {
+        "_index": "libreria",
+        "_type": "libros",
+        "_id": "4",
+        "_score": 1.3730791,
+        "_source": {
+          "titulo": "el libro 4",
+          "precio": 13,
+          "colores": [
+            "amarillo"
+          ]
+        }
+      }
+    ]
+  }
+}
+```
 Query booleano los documentos cuyo titulo no contenga el numero uno 
 y cuyo titulo no contenga la cadena "libro 4"
 
@@ -142,7 +533,52 @@ GET /libreria/libros/_search
   }
 }
 ```
-
+#### RESULTADO
+``` json
+{
+  "took": 0,
+  "timed_out": false,
+  "_shards": {
+    "total": 1,
+    "successful": 1,
+    "skipped": 0,
+    "failed": 0
+  },
+  "hits": {
+    "total": 2,
+    "max_score": 1,
+    "hits": [
+      {
+        "_index": "libreria",
+        "_type": "libros",
+        "_id": "2",
+        "_score": 1,
+        "_source": {
+          "titulo": "el libro 2",
+          "precio": 12,
+          "colores": [
+            "purpura",
+            "azul"
+          ]
+        }
+      },
+      {
+        "_index": "libreria",
+        "_type": "libros",
+        "_id": "5",
+        "_score": 1,
+        "_source": {
+          "titulo": "el libro 5",
+          "precio": 9,
+          "colores": [
+            "profundo azul"
+          ]
+        }
+      }
+    ]
+  }
+}
+```
 Boost. En un query booleano el parametro boost da mas peso a la consulta donde es aplicado
 en este caso aue un documento tenga el color amarillo hara que su puntaje o score sea mayor.
 ```json
@@ -177,7 +613,64 @@ GET /libreria/libros/_search
   }
 }
 ```
-
+#### RESULTADO
+``` json
+{
+  "took": 2,
+  "timed_out": false,
+  "_shards": {
+    "total": 1,
+    "successful": 1,
+    "skipped": 0,
+    "failed": 0
+  },
+  "hits": {
+    "total": 2,
+    "max_score": 5.3534555,
+    "hits": [
+      {
+        "_index": "libreria",
+        "_type": "libros",
+        "_id": "4",
+        "_score": 5.3534555,
+        "_source": {
+          "titulo": "el libro 4",
+          "precio": 13,
+          "colores": [
+            "amarillo"
+          ]
+        },
+        "highlight": {
+          "colores": [
+            "<em>amarillo</em>"
+          ]
+        }
+      },
+      {
+        "_index": "libreria",
+        "_type": "libros",
+        "_id": "5",
+        "_score": 2.5192544,
+        "_source": {
+          "titulo": "el libro 5",
+          "precio": 9,
+          "colores": [
+            "profundo azul"
+          ]
+        },
+        "highlight": {
+          "titulo": [
+            "el libro <em>5</em>"
+          ],
+          "colores": [
+            "<em>profundo</em> azul"
+          ]
+        }
+      }
+    ]
+  }
+}
+```
 Filtro y query.
 Utilizacion de un query que trae los documentos que contengan en el titulo la palabra "el" o la palabra "libro". Utilizacion de filtro para filtrar los documentos aue tengan un precio mayor a 10 o un precio menor a 12.
 ```json
@@ -205,7 +698,69 @@ GET /libreria/libros/_search
   
 }
 ```
-
+#### RESULTADO
+``` json
+{
+  "took": 1,
+  "timed_out": false,
+  "_shards": {
+    "total": 1,
+    "successful": 1,
+    "skipped": 0,
+    "failed": 0
+  },
+  "hits": {
+    "total": 3,
+    "max_score": 0.15314002,
+    "hits": [
+      {
+        "_index": "libreria",
+        "_type": "libros",
+        "_id": "1",
+        "_score": 0.15314002,
+        "_source": {
+          "titulo": "el libro 1",
+          "precio": 10,
+          "colores": [
+            "gris",
+            "purpura",
+            "azul"
+          ]
+        }
+      },
+      {
+        "_index": "libreria",
+        "_type": "libros",
+        "_id": "2",
+        "_score": 0.15314002,
+        "_source": {
+          "titulo": "el libro 2",
+          "precio": 12,
+          "colores": [
+            "purpura",
+            "azul"
+          ]
+        }
+      },
+      {
+        "_index": "libreria",
+        "_type": "libros",
+        "_id": "3",
+        "_score": 0.15314002,
+        "_source": {
+          "titulo": "el libro 1",
+          "precio": 10,
+          "colores": [
+            "gris",
+            "purpura",
+            "azul"
+          ]
+        }
+      }
+    ]
+  }
+}
+```
 Se pueden utilizar solo filtros sin tener que hacer un query.
 ```json
 GET /libreria/libros/_search
@@ -227,7 +782,52 @@ GET /libreria/libros/_search
   
 }
 ```
-
+#### RESULTADO
+``` json
+{
+  "took": 0,
+  "timed_out": false,
+  "_shards": {
+    "total": 1,
+    "successful": 1,
+    "skipped": 0,
+    "failed": 0
+  },
+  "hits": {
+    "total": 2,
+    "max_score": 0,
+    "hits": [
+      {
+        "_index": "libreria",
+        "_type": "libros",
+        "_id": "2",
+        "_score": 0,
+        "_source": {
+          "titulo": "el libro 2",
+          "precio": 12,
+          "colores": [
+            "purpura",
+            "azul"
+          ]
+        }
+      },
+      {
+        "_index": "libreria",
+        "_type": "libros",
+        "_id": "4",
+        "_score": 0,
+        "_source": {
+          "titulo": "el libro 4",
+          "precio": 13,
+          "colores": [
+            "amarillo"
+          ]
+        }
+      }
+    ]
+  }
+}
+```
 Analizar con el tokenizer standard. Cada palabra sera un token y los numeros seran ignorados
 ```json
 GET /libreria/_analyze
@@ -236,7 +836,48 @@ GET /libreria/_analyze
   "text":"Juan valdez juan cafe 1"
 }
 ```
-
+#### RESULTADO
+``` json
+{
+  "tokens": [
+    {
+      "token": "Juan",
+      "start_offset": 0,
+      "end_offset": 4,
+      "type": "<ALPHANUM>",
+      "position": 0
+    },
+    {
+      "token": "valdez",
+      "start_offset": 5,
+      "end_offset": 11,
+      "type": "<ALPHANUM>",
+      "position": 1
+    },
+    {
+      "token": "juan",
+      "start_offset": 12,
+      "end_offset": 16,
+      "type": "<ALPHANUM>",
+      "position": 2
+    },
+    {
+      "token": "cafe",
+      "start_offset": 17,
+      "end_offset": 21,
+      "type": "<ALPHANUM>",
+      "position": 3
+    },
+    {
+      "token": "1",
+      "start_offset": 22,
+      "end_offset": 23,
+      "type": "<NUM>",
+      "position": 4
+    }
+  ]
+}
+```
 Analizar con el tokenizer standar cada token sera indexado en minuscula el uno se perdera
 ```json
 GET /libreria/_analyze
@@ -246,7 +887,48 @@ GET /libreria/_analyze
   "text":"Juan valdez juan cafe 1"
 }
 ```
-
+#### RESULTADO
+``` json
+{
+  "tokens": [
+    {
+      "token": "juan",
+      "start_offset": 0,
+      "end_offset": 4,
+      "type": "<ALPHANUM>",
+      "position": 0
+    },
+    {
+      "token": "valdez",
+      "start_offset": 5,
+      "end_offset": 11,
+      "type": "<ALPHANUM>",
+      "position": 1
+    },
+    {
+      "token": "juan",
+      "start_offset": 12,
+      "end_offset": 16,
+      "type": "<ALPHANUM>",
+      "position": 2
+    },
+    {
+      "token": "cafe",
+      "start_offset": 17,
+      "end_offset": 21,
+      "type": "<ALPHANUM>",
+      "position": 3
+    },
+    {
+      "token": "1",
+      "start_offset": 22,
+      "end_offset": 23,
+      "type": "<NUM>",
+      "position": 4
+    }
+  ]
+}
+```
 Analizar con el tokenizer standar cada token sera indexado en minuscula cada token sera indexado una sola vez el uno se perdera
 ```json
 GET /libreria/_analyze
@@ -256,7 +938,41 @@ GET /libreria/_analyze
   "text":"Juan Valdez juan cafe juan juan 1"
 }
 ```
-
+#### RESULTADO
+``` json
+{
+  "tokens": [
+    {
+      "token": "juan",
+      "start_offset": 0,
+      "end_offset": 4,
+      "type": "<ALPHANUM>",
+      "position": 0
+    },
+    {
+      "token": "valdez",
+      "start_offset": 5,
+      "end_offset": 11,
+      "type": "<ALPHANUM>",
+      "position": 1
+    },
+    {
+      "token": "cafe",
+      "start_offset": 17,
+      "end_offset": 21,
+      "type": "<ALPHANUM>",
+      "position": 2
+    },
+    {
+      "token": "1",
+      "start_offset": 32,
+      "end_offset": 33,
+      "type": "<NUM>",
+      "position": 3
+    }
+  ]
+}
+```
 Analizar con el tokenizer standar cada token sera indexado en minuscula cada token sera indexado por cada aparicion juan valdez sera indexado varias veces
 ```json
 GET /libreria/_analyze
@@ -265,12 +981,110 @@ GET /libreria/_analyze
   "text":"Juan Valdez juan cafe juan juan 1"
 }
 ```
+#### RESULTADO
+``` json
+{
+  "tokens": [
+    {
+      "token": "juan",
+      "start_offset": 0,
+      "end_offset": 4,
+      "type": "<ALPHANUM>",
+      "position": 0
+    },
+    {
+      "token": "valdez",
+      "start_offset": 5,
+      "end_offset": 11,
+      "type": "<ALPHANUM>",
+      "position": 1
+    },
+    {
+      "token": "juan",
+      "start_offset": 12,
+      "end_offset": 16,
+      "type": "<ALPHANUM>",
+      "position": 2
+    },
+    {
+      "token": "cafe",
+      "start_offset": 17,
+      "end_offset": 21,
+      "type": "<ALPHANUM>",
+      "position": 3
+    },
+    {
+      "token": "juan",
+      "start_offset": 22,
+      "end_offset": 26,
+      "type": "<ALPHANUM>",
+      "position": 4
+    },
+    {
+      "token": "juan",
+      "start_offset": 27,
+      "end_offset": 31,
+      "type": "<ALPHANUM>",
+      "position": 5
+    },
+    {
+      "token": "1",
+      "start_offset": 32,
+      "end_offset": 33,
+      "type": "<NUM>",
+      "position": 6
+    }
+  ]
+}
+```
 Salta simbolos como $ o @ y no separa por el punto.
 ```json
 GET /libreria/_analyze
 {
   "tokenizer":"standard",
   "text":"Juan.Valdez juan cafe! $1 @9514"
+}
+```
+#### RESULTADO
+``` json
+{
+  "tokens": [
+    {
+      "token": "Juan.Valdez",
+      "start_offset": 0,
+      "end_offset": 11,
+      "type": "<ALPHANUM>",
+      "position": 0
+    },
+    {
+      "token": "juan",
+      "start_offset": 12,
+      "end_offset": 16,
+      "type": "<ALPHANUM>",
+      "position": 1
+    },
+    {
+      "token": "cafe",
+      "start_offset": 17,
+      "end_offset": 21,
+      "type": "<ALPHANUM>",
+      "position": 2
+    },
+    {
+      "token": "1",
+      "start_offset": 24,
+      "end_offset": 25,
+      "type": "<NUM>",
+      "position": 3
+    },
+    {
+      "token": "9514",
+      "start_offset": 27,
+      "end_offset": 31,
+      "type": "<NUM>",
+      "position": 4
+    }
+  ]
 }
 ```
 Salta todo lo que no sea una letra
@@ -283,12 +1097,82 @@ GET /libreria/_analyze
   "text":"Juan.Valdez juan cafe! $1 @9514a"
 }
 ```
+#### RESULTADO
+``` json
+{
+  "tokens": [
+    {
+      "token": "juan",
+      "start_offset": 0,
+      "end_offset": 4,
+      "type": "word",
+      "position": 0
+    },
+    {
+      "token": "valdez",
+      "start_offset": 5,
+      "end_offset": 11,
+      "type": "word",
+      "position": 1
+    },
+    {
+      "token": "juan",
+      "start_offset": 12,
+      "end_offset": 16,
+      "type": "word",
+      "position": 2
+    },
+    {
+      "token": "cafe",
+      "start_offset": 17,
+      "end_offset": 21,
+      "type": "word",
+      "position": 3
+    },
+    {
+      "token": "a",
+      "start_offset": 31,
+      "end_offset": 32,
+      "type": "word",
+      "position": 4
+    }
+  ]
+}
+```
 El tokenizer uax_url_email permite indexar correos y direcciones web, a diferencia del tokenizer standard esto no separara donde estan los puntos las arrobas. Es util si se maneja ese tipo de informacion en los documentos.
 ```json
 GET /libreria/_analyze
 {
   "tokenizer":"uax_url_email",
   "text":"fulanito@email.com website: http://fulanitoswebsite.com"
+}
+```
+#### RESULTADO
+``` json
+{
+  "tokens": [
+    {
+      "token": "fulanito@email.com",
+      "start_offset": 0,
+      "end_offset": 18,
+      "type": "<EMAIL>",
+      "position": 0
+    },
+    {
+      "token": "website",
+      "start_offset": 19,
+      "end_offset": 26,
+      "type": "<ALPHANUM>",
+      "position": 1
+    },
+    {
+      "token": "http://fulanitoswebsite.com",
+      "start_offset": 28,
+      "end_offset": 55,
+      "type": "<URL>",
+      "position": 2
+    }
+  ]
 }
 ```
 #Las agregaciones pueden ser usadas para explorar datos. En este caso se va a contar las apariciones de cada color en los documentos
@@ -302,6 +1186,52 @@ GET /libreria/_search
       "terms": {
         "field": "colores.keyword"
       }
+    }
+  }
+}
+```
+#### RESULTADO
+``` json
+{
+  "took": 1,
+  "timed_out": false,
+  "_shards": {
+    "total": 1,
+    "successful": 1,
+    "skipped": 0,
+    "failed": 0
+  },
+  "hits": {
+    "total": 5,
+    "max_score": 0,
+    "hits": []
+  },
+  "aggregations": {
+    "colores-populares": {
+      "doc_count_error_upper_bound": 0,
+      "sum_other_doc_count": 0,
+      "buckets": [
+        {
+          "key": "azul",
+          "doc_count": 3
+        },
+        {
+          "key": "purpura",
+          "doc_count": 3
+        },
+        {
+          "key": "gris",
+          "doc_count": 2
+        },
+        {
+          "key": "amarillo",
+          "doc_count": 1
+        },
+        {
+          "key": "profundo azul",
+          "doc_count": 1
+        }
+      ]
     }
   }
 }
@@ -328,6 +1258,123 @@ GET /libreria/_search
 }
 
 ```
+#### RESULTADO
+``` json
+{
+  "took": 0,
+  "timed_out": false,
+  "_shards": {
+    "total": 1,
+    "successful": 1,
+    "skipped": 0,
+    "failed": 0
+  },
+  "hits": {
+    "total": 5,
+    "max_score": 0.07657001,
+    "hits": [
+      {
+        "_index": "libreria",
+        "_type": "libros",
+        "_id": "1",
+        "_score": 0.07657001,
+        "_source": {
+          "titulo": "el libro 1",
+          "precio": 10,
+          "colores": [
+            "gris",
+            "purpura",
+            "azul"
+          ]
+        }
+      },
+      {
+        "_index": "libreria",
+        "_type": "libros",
+        "_id": "2",
+        "_score": 0.07657001,
+        "_source": {
+          "titulo": "el libro 2",
+          "precio": 12,
+          "colores": [
+            "purpura",
+            "azul"
+          ]
+        }
+      },
+      {
+        "_index": "libreria",
+        "_type": "libros",
+        "_id": "3",
+        "_score": 0.07657001,
+        "_source": {
+          "titulo": "el libro 1",
+          "precio": 10,
+          "colores": [
+            "gris",
+            "purpura",
+            "azul"
+          ]
+        }
+      },
+      {
+        "_index": "libreria",
+        "_type": "libros",
+        "_id": "4",
+        "_score": 0.07657001,
+        "_source": {
+          "titulo": "el libro 4",
+          "precio": 13,
+          "colores": [
+            "amarillo"
+          ]
+        }
+      },
+      {
+        "_index": "libreria",
+        "_type": "libros",
+        "_id": "5",
+        "_score": 0.07657001,
+        "_source": {
+          "titulo": "el libro 5",
+          "precio": 9,
+          "colores": [
+            "profundo azul"
+          ]
+        }
+      }
+    ]
+  },
+  "aggregations": {
+    "colores-populares": {
+      "doc_count_error_upper_bound": 0,
+      "sum_other_doc_count": 0,
+      "buckets": [
+        {
+          "key": "azul",
+          "doc_count": 3
+        },
+        {
+          "key": "purpura",
+          "doc_count": 3
+        },
+        {
+          "key": "gris",
+          "doc_count": 2
+        },
+        {
+          "key": "amarillo",
+          "doc_count": 1
+        },
+        {
+          "key": "profundo azul",
+          "doc_count": 1
+        }
+      ]
+    }
+  }
+}
+```
 En este caso vamos a calcular el precio promedio de los documentos que cumplen el query.
 ```json
 GET /libreria/_search
@@ -347,6 +1394,100 @@ GET /libreria/_search
   }
 }
 
+```
+#### RESULTADO
+``` json
+{
+  "took": 1,
+  "timed_out": false,
+  "_shards": {
+    "total": 1,
+    "successful": 1,
+    "skipped": 0,
+    "failed": 0
+  },
+  "hits": {
+    "total": 5,
+    "max_score": 0.07657001,
+    "hits": [
+      {
+        "_index": "libreria",
+        "_type": "libros",
+        "_id": "1",
+        "_score": 0.07657001,
+        "_source": {
+          "titulo": "el libro 1",
+          "precio": 10,
+          "colores": [
+            "gris",
+            "purpura",
+            "azul"
+          ]
+        }
+      },
+      {
+        "_index": "libreria",
+        "_type": "libros",
+        "_id": "2",
+        "_score": 0.07657001,
+        "_source": {
+          "titulo": "el libro 2",
+          "precio": 12,
+          "colores": [
+            "purpura",
+            "azul"
+          ]
+        }
+      },
+      {
+        "_index": "libreria",
+        "_type": "libros",
+        "_id": "3",
+        "_score": 0.07657001,
+        "_source": {
+          "titulo": "el libro 1",
+          "precio": 10,
+          "colores": [
+            "gris",
+            "purpura",
+            "azul"
+          ]
+        }
+      },
+      {
+        "_index": "libreria",
+        "_type": "libros",
+        "_id": "4",
+        "_score": 0.07657001,
+        "_source": {
+          "titulo": "el libro 4",
+          "precio": 13,
+          "colores": [
+            "amarillo"
+          ]
+        }
+      },
+      {
+        "_index": "libreria",
+        "_type": "libros",
+        "_id": "5",
+        "_score": 0.07657001,
+        "_source": {
+          "titulo": "el libro 5",
+          "precio": 9,
+          "colores": [
+            "profundo azul"
+          ]
+        }
+      }
+    ]
+  },
+  "aggregations": {
+    "precio promedio": {
+      "value": 10.8
+    }
+  }
+}
 ```
 Tambien se pueden realizar agregaciones anidadas. En este caso para los documentos que cumplan el query se va a realizar una agreagaciôn del precio promedio para cada color. 
 
@@ -377,6 +1518,138 @@ GET /libreria/_search
   
 }
 ```
+#### RESULTADO
+``` json
+{
+  "took": 0,
+  "timed_out": false,
+  "_shards": {
+    "total": 1,
+    "successful": 1,
+    "skipped": 0,
+    "failed": 0
+  },
+  "hits": {
+    "total": 5,
+    "max_score": 0.07657001,
+    "hits": [
+      {
+        "_index": "libreria",
+        "_type": "libros",
+        "_id": "1",
+        "_score": 0.07657001,
+        "_source": {
+          "titulo": "el libro 1",
+          "precio": 10,
+          "colores": [
+            "gris",
+            "purpura",
+            "azul"
+          ]
+        }
+      },
+      {
+        "_index": "libreria",
+        "_type": "libros",
+        "_id": "2",
+        "_score": 0.07657001,
+        "_source": {
+          "titulo": "el libro 2",
+          "precio": 12,
+          "colores": [
+            "purpura",
+            "azul"
+          ]
+        }
+      },
+      {
+        "_index": "libreria",
+        "_type": "libros",
+        "_id": "3",
+        "_score": 0.07657001,
+        "_source": {
+          "titulo": "el libro 1",
+          "precio": 10,
+          "colores": [
+            "gris",
+            "purpura",
+            "azul"
+          ]
+        }
+      },
+      {
+        "_index": "libreria",
+        "_type": "libros",
+        "_id": "4",
+        "_score": 0.07657001,
+        "_source": {
+          "titulo": "el libro 4",
+          "precio": 13,
+          "colores": [
+            "amarillo"
+          ]
+        }
+      },
+      {
+        "_index": "libreria",
+        "_type": "libros",
+        "_id": "5",
+        "_score": 0.07657001,
+        "_source": {
+          "titulo": "el libro 5",
+          "precio": 9,
+          "colores": [
+            "profundo azul"
+          ]
+        }
+      }
+    ]
+  },
+  "aggregations": {
+    "colores-populares": {
+      "doc_count_error_upper_bound": 0,
+      "sum_other_doc_count": 0,
+      "buckets": [
+        {
+          "key": "azul",
+          "doc_count": 3,
+          "precio promedio": {
+            "value": 10.666666666666666
+          }
+        },
+        {
+          "key": "purpura",
+          "doc_count": 3,
+          "precio promedio": {
+            "value": 10.666666666666666
+          }
+        },
+        {
+          "key": "gris",
+          "doc_count": 2,
+          "precio promedio": {
+            "value": 10
+          }
+        },
+        {
+          "key": "amarillo",
+          "doc_count": 1,
+          "precio promedio": {
+            "value": 13
+          }
+        },
+        {
+          "key": "profundo azul",
+          "doc_count": 1,
+          "precio promedio": {
+            "value": 9
+          }
+        }
+      ]
+    }
+  }
+}
+```
 Actualizar documentos
 En elasticsearch hay varias sintaxis para actualizar documentos
 
@@ -385,10 +1658,41 @@ Actualizar un documento indicando el indice y escribiendo todos los parametros d
 POST /libreria/libros/1
 { "titulo": "el libro 1 updated", "precio": 11, "colores":["gris","purpura","azul","black"]}
 ```
+#### RESULTADO
+``` json
+
+  "_index": "libreria",
+  "_type": "libros",
+  "_id": "1",
+  "_version": 2,
+  "result": "updated",
+  "_shards": {
+    "total": 1,
+    "successful": 1,
+    "failed": 0
+  },
+  "created": false
+}
+```
 Utilizando la clausula _update pode,os actualizar un campo especifico de un documento: en este caso el titulo 
 ```json
 POST /libreria/libros/2/_update
 {"doc":{"titulo": "el libro dos"}}
+```
+#### RESULTADO
+``` json
+{
+  "_index": "libreria",
+  "_type": "libros",
+  "_id": "2",
+  "_version": 2,
+  "result": "updated",
+  "_shards": {
+    "total": 1,
+    "successful": 1,
+    "failed": 0
+  }
+}
 ```
 #Elastic search no es tiene schemas
 #Tratara de inferir de un documento si el token es un long un flotante o un double
@@ -396,7 +1700,40 @@ POST /libreria/libros/2/_update
 ```json
 GET /libreria/_mapping
 ```
-
+#### RESULTADO
+``` json
+{
+  "libreria": {
+    "mappings": {
+      "libros": {
+        "properties": {
+          "colores": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "ignore_above": 256
+              }
+            }
+          },
+          "precio": {
+            "type": "long"
+          },
+          "titulo": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "ignore_above": 256
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+```
 Sintaxis para generar un mapping que nos permita definir el tipo de los campos de un indice. En este caso va a ser un indice de libreros famosos el nombre del librero va a ser de tipo text esto quiere decir que cuando se analice cada palabra de la cadena sera un token y se generara metainformaciôn para cada una. El campo colores\_favoritos  es de tipo keyword, esto auiere decir que se tomara toda la cadena como un valor y no se analizara. El campo lugar de nacimiento es de tipo geografico por lo que se podrian hacer procesamientos calculando la distancia con otros puntos.
 
 ```json
@@ -443,7 +1780,14 @@ PUT /libreros-famosos
   }
 }
 ```
-
+#### RESULTADO
+``` json
+{
+  "acknowledged": true,
+  "shards_acknowledged": true,
+  "index": "libreros-famosos"
+}
+```
 Ejemplo de un documento que cumple el mapping previamente definido
 
 ```json
@@ -458,5 +1802,20 @@ PUT /libreros-famosos/librero/1
 "descripcion":"Una descripcion inventada de un señor que no existe."
 }
 ```
-
+#### RESULTADO
+``` json
+{
+  "_index": "libreros-famosos",
+  "_type": "librero",
+  "_id": "1",
+  "_version": 1,
+  "result": "created",
+  "_shards": {
+    "total": 1,
+    "successful": 1,
+    "failed": 0
+  },
+  "created": true
+}
+```
 
