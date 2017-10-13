@@ -2,6 +2,8 @@ Obtener todos los documentos en elasticsearch
 ``` json
 GET /
 ```
+## RESULTADO
+
 
 Insertar documento primero indice luego typo y luego identificador del documento
 ```json
@@ -18,6 +20,8 @@ Eliminar documento
 ```json
 DELETE /my-index/my-type/1
 ```
+
+Crear un nuevo indice con parametros de configuracion
 ```json
 PUT /libreria
 {
@@ -27,6 +31,8 @@ PUT /libreria
   }
 }
 ```
+
+Agregar varios documentos de una sola vez
 ```json
 POST /libreria/libros/_bulk
 { "index": {"_id": 1}}
@@ -36,6 +42,9 @@ POST /libreria/libros/_bulk
 { "index": {"_id": 3}}
 { "titulo": "el libro 1", "precio": 10, "colores":["gris","purpura","azul"]}
 ```
+
+Agregar mas docu,entos
+
 ```json
 POST /libreria/libros/_bulk
 { "index": {"_id": 4}}
@@ -44,9 +53,12 @@ POST /libreria/libros/_bulk
 { "titulo": "el libro 5", "precio": 9, "colores":["profundo azul"]}
 ```
 
+Obtener todos los documentos del indice libreria y de tipo libros
 ```json
 GET /libreria/libros/_search
 ```
+
+Obtener todos los documentos del indice libreria y de tipo libros cuyo indice contenga el numero 3
 ```json
 GET /libreria/libros/_search
 {
@@ -58,6 +70,7 @@ GET /libreria/libros/_search
 }
 ```
 
+Obtener todos los documentos cuyo indice tenga los numeros 5 o 2
 ```json
 GET /libreria/libros/_search
 {
@@ -68,6 +81,8 @@ GET /libreria/libros/_search
   }
 }
 ```
+
+Obtener todos los documentos cuyo titulo contenga exactamente la cadena "libro 5"
 ```json
 GET /libreria/libros/_search
 {
@@ -81,7 +96,8 @@ GET /libreria/libros/_search
 
 Los resultados son ranqueados por el campo relevance _score
 
-Query booleano o bool query
+Query booleano/ Obtiene los documentos que contengan en su titulo la palabra el
+y que contengan exactamente la cadena "libro 4"
 ```json
 GET /libreria/libros/_search
 {
@@ -102,6 +118,9 @@ GET /libreria/libros/_search
   }
 }
 ```
+
+Query booleano los documentos cuyo titulo no contenga el numero uno 
+y cuyo titulo no contenga la cadena "libro 4"
 
 ```json
 GET /libreria/libros/_search
@@ -124,7 +143,8 @@ GET /libreria/libros/_search
 }
 ```
 
-Boost makes el query weight more against el oelr queries in a should request
+Boost. En un query booleano el parametro boost da mas peso a la consulta donde es aplicado
+en este caso aue un documento tenga el color amarillo hara que su puntaje o score sea mayor.
 ```json
 GET /libreria/libros/_search
 {
@@ -157,6 +177,9 @@ GET /libreria/libros/_search
   }
 }
 ```
+
+Filtro y query.
+Utilizacion de un query que trae los documentos que contengan en el titulo la palabra "el" o la palabra "libro". Utilizacion de filtro para filtrar los documentos aue tengan un precio mayor a 10 o un precio menor a 12.
 ```json
 GET /libreria/libros/_search
 {
@@ -182,6 +205,8 @@ GET /libreria/libros/_search
   
 }
 ```
+
+Se pueden utilizar solo filtros sin tener que hacer un query.
 ```json
 GET /libreria/libros/_search
 {
@@ -202,6 +227,8 @@ GET /libreria/libros/_search
   
 }
 ```
+
+Analizar con el tokenizer standard. Cada palabra sera un token y los numeros seran ignorados
 ```json
 GET /libreria/_analyze
 {
@@ -209,6 +236,8 @@ GET /libreria/_analyze
   "text":"Juan valdez juan cafe 1"
 }
 ```
+
+Analizar con el tokenizer standar cada token sera indexado en minuscula el uno se perdera
 ```json
 GET /libreria/_analyze
 {
@@ -217,6 +246,8 @@ GET /libreria/_analyze
   "text":"Juan valdez juan cafe 1"
 }
 ```
+
+Analizar con el tokenizer standar cada token sera indexado en minuscula cada token sera indexado una sola vez el uno se perdera
 ```json
 GET /libreria/_analyze
 {
@@ -225,6 +256,8 @@ GET /libreria/_analyze
   "text":"Juan Valdez juan cafe juan juan 1"
 }
 ```
+
+Analizar con el tokenizer standar cada token sera indexado en minuscula cada token sera indexado por cada aparicion juan valdez sera indexado varias veces
 ```json
 GET /libreria/_analyze
 {
@@ -250,7 +283,7 @@ GET /libreria/_analyze
   "text":"Juan.Valdez juan cafe! $1 @9514a"
 }
 ```
-#Emails or website with standard tokenizer misses @ or //
+El tokenizer uax_url_email permite indexar correos y direcciones web, a diferencia del tokenizer standard esto no separara donde estan los puntos las arrobas. Es util si se maneja ese tipo de informacion en los documentos.
 ```json
 GET /libreria/_analyze
 {
@@ -258,7 +291,7 @@ GET /libreria/_analyze
   "text":"fulanito@email.com website: http://fulanitoswebsite.com"
 }
 ```
-#Aggregations can be used to explore data
+#Las agregaciones pueden ser usadas para explorar datos. En este caso se va a contar las apariciones de cada color en los documentos
 ```json
 GET /libreria/_search
 {
@@ -274,7 +307,7 @@ GET /libreria/_search
 }
 ```
 Query y agregaciones
-Obtenemos agregaciones para los documentos que cumplen el query.
+Obtenemos agregaciones de colores para los documentos que cumplen el query aue en este caso es que tengan en su titulo la palabra libro.
 
 ```json
 GET /libreria/_search
@@ -295,7 +328,7 @@ GET /libreria/_search
 }
 
 ```
-#obtener una agregacion por precio
+En este caso vamos a calcular el precio promedio de los documentos que cumplen el query.
 ```json
 GET /libreria/_search
 {
@@ -315,7 +348,7 @@ GET /libreria/_search
 }
 
 ```
-#agregacion anidada precio promedio por color
+Tambien se pueden realizar agregaciones anidadas. En este caso para los documentos que cumplan el query se va a realizar una agreagaciôn del precio promedio para cada color. 
 
 ```json
 GET /libreria/_search
@@ -343,22 +376,28 @@ GET /libreria/_search
   }
   
 }
+```
+Actualizar documentos
+En elasticsearch hay varias sintaxis para actualizar documentos
 
-#Actualizar documentos
+Actualizar un documento indicando el indice y escribiendo todos los parametros del documento aue seran actualizados
 ```json
 POST /libreria/libros/1
 { "titulo": "el libro 1 updated", "precio": 11, "colores":["gris","purpura","azul","black"]}
-
-#Instruccion para actualizar
+```
+Utilizando la clausula _update pode,os actualizar un campo especifico de un documento: en este caso el titulo 
 ```json
 POST /libreria/libros/2/_update
 {"doc":{"titulo": "el libro dos"}}
-
+```
 #Elastic search no es tiene schemas
-#Tratara de inferir de un docu,ento si es un long un flotante o un double
+#Tratara de inferir de un documento si el token es un long un flotante o un double
 
 ```json
 GET /libreria/_mapping
+```
+
+Sintaxis para generar un mapping que nos permita definir el tipo de los campos de un indice. En este caso va a ser un indice de libreros famosos el nombre del librero va a ser de tipo text esto quiere decir que cuando se analice cada palabra de la cadena sera un token y se generara metainformaciôn para cada una. El campo colores\_favoritos  es de tipo keyword, esto auiere decir que se tomara toda la cadena como un valor y no se analizara. El campo lugar de nacimiento es de tipo geografico por lo que se podrian hacer procesamientos calculando la distancia con otros puntos.
 
 ```json
 PUT /libreros-famosos
@@ -404,6 +443,9 @@ PUT /libreros-famosos
   }
 }
 ```
+
+Ejemplo de un documento que cumple el mapping previamente definido
+
 ```json
 PUT /libreros-famosos/librero/1
 {
@@ -416,4 +458,5 @@ PUT /libreros-famosos/librero/1
 "descripcion":"Una descripcion inventada de un señor que no existe."
 }
 ```
+
 
