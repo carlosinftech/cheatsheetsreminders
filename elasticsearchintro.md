@@ -1,11 +1,11 @@
 
 #obtener todos los docu,entos en elasticsearch
-```
+``` json
 GET /
 ```
 
 #insertar documento primero indice luego typo y luego identificador del documento
-```
+```json
 POST /my-indice/mi-tipo/1
 {
   "body":"loquesea"
