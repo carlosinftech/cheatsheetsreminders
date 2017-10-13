@@ -1,4 +1,5 @@
-#get all el documents in elasticsearch
+# H1
+#obtener todos los docu,entos en elasticsearch
 GET /
 
 #insertar documento primero indice luego typo y luego identificador del documento
@@ -269,20 +270,12 @@ GET /libreria/_search
   }
 }
 
-
+#obtener una agregacion por precio
 GET /libreria/_search
 {
   "query":   {
     "match": {
       "titulo": "libro"
-    }
-  },
-  "aggs":{
-    "colores-populares": 
-    {
-      "terms": {
-        "field": "colores.keyword"
-      }
     }
   },
   "aggs":{
