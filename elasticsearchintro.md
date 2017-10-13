@@ -1,23 +1,24 @@
-
-#obtener todos los docu,entos en elasticsearch
+Obtener todos los documentos en elasticsearch
 ``` json
 GET /
 ```
 
-#insertar documento primero indice luego typo y luego identificador del documento
+Insertar documento primero indice luego typo y luego identificador del documento
 ```json
 POST /my-indice/mi-tipo/1
 {
   "body":"loquesea"
 }
 ```
-#consultar documento recien creado
+Consultar documento recien creado
+```json
 GET /my-indice/mi-tipo/1
-
-#eliminar documento
+```
+Eliminar documento
+```json
 DELETE /my-index/my-type/1
-
-
+```
+```json
 PUT /libreria
 {
   "settings": {
@@ -25,7 +26,8 @@ PUT /libreria
     "index.number_of_replicas":0
   }
 }
-
+```
+```json
 POST /libreria/libros/_bulk
 { "index": {"_id": 1}}
 { "titulo": "el libro 1", "precio": 10, "colores":["gris","purpura","azul"]}
@@ -33,17 +35,19 @@ POST /libreria/libros/_bulk
 { "titulo": "el libro 2", "precio": 12, "colores":["purpura","azul"]}
 { "index": {"_id": 3}}
 { "titulo": "el libro 1", "precio": 10, "colores":["gris","purpura","azul"]}
-
+```
+```json
 POST /libreria/libros/_bulk
 { "index": {"_id": 4}}
 { "titulo": "el libro 4", "precio": 13, "colores":["amarillo"]}
 { "index": {"_id": 5}}
 { "titulo": "el libro 5", "precio": 9, "colores":["profundo azul"]}
+```
 
-
-
+```json
 GET /libreria/libros/_search
-
+```
+```json
 GET /libreria/libros/_search
 {
   "query":   {
@@ -52,7 +56,9 @@ GET /libreria/libros/_search
     }
   }
 }
+```
 
+```json
 GET /libreria/libros/_search
 {
   "query":   {
@@ -61,7 +67,8 @@ GET /libreria/libros/_search
     }
   }
 }
-
+```
+```json
 GET /libreria/libros/_search
 {
   "query":   {
@@ -70,11 +77,12 @@ GET /libreria/libros/_search
     }
   }
 }
+```
 
-#los resultados son ranqueados por el campo relevance _score
+Los resultados son ranqueados por el campo relevance _score
 
-#query booleano o bool query
-
+Query booleano o bool query
+```json
 GET /libreria/libros/_search
 {
   "query": {
@@ -93,9 +101,9 @@ GET /libreria/libros/_search
     }
   }
 }
+```
 
-
-
+```json
 GET /libreria/libros/_search
 {
   "query": {
@@ -114,9 +122,10 @@ GET /libreria/libros/_search
     }
   }
 }
+```
 
-
-#Boost makes el query weight more against el oelr queries in a should request
+Boost makes el query weight more against el oelr queries in a should request
+```json
 GET /libreria/libros/_search
 {
   "query": {
@@ -147,8 +156,8 @@ GET /libreria/libros/_search
     }
   }
 }
-
-
+```
+```json
 GET /libreria/libros/_search
 {
   "query": {
@@ -172,8 +181,8 @@ GET /libreria/libros/_search
   }
   
 }
-
-
+```
+```json
 GET /libreria/libros/_search
 {
   "query": {
@@ -192,55 +201,65 @@ GET /libreria/libros/_search
   }
   
 }
-
+```
+```json
 GET /libreria/_analyze
 {
   "tokenizer":"standard",
   "text":"Juan valdez juan cafe 1"
 }
-
+```
+```json
 GET /libreria/_analyze
 {
   "tokenizer":"standard",
   "filter": ["lowercase"], 
   "text":"Juan valdez juan cafe 1"
 }
-
+```
+```json
 GET /libreria/_analyze
 {
   "tokenizer":"standard",
   "filter": ["lowercase", "unique"], 
   "text":"Juan Valdez juan cafe juan juan 1"
 }
-
+```
+```json
 GET /libreria/_analyze
 {
   "analyzer":"standard",
   "text":"Juan Valdez juan cafe juan juan 1"
 }
-#Salta simbolos como $ o @ y no separa por el punto.
+```
+Salta simbolos como $ o @ y no separa por el punto.
+```json
 GET /libreria/_analyze
 {
   "tokenizer":"standard",
   "text":"Juan.Valdez juan cafe! $1 @9514"
 }
+```
+Salta todo lo que no sea una letra
+```json
 
-#skips everything that is not a letter
 GET /libreria/_analyze
 {
   "tokenizer":"letter",
   "filter": ["lowercase"], 
   "text":"Juan.Valdez juan cafe! $1 @9514a"
 }
-
+```
 #Emails or website with standard tokenizer misses @ or //
+```json
 GET /libreria/_analyze
 {
   "tokenizer":"uax_url_email",
   "text":"fulanito@email.com website: http://fulanitoswebsite.com"
 }
-
+```
 #Aggregations can be used to explore data
+```json
 GET /libreria/_search
 {
   "size":0,
@@ -253,10 +272,11 @@ GET /libreria/_search
     }
   }
 }
+```
+Query y agregaciones
+Obtenemos agregaciones para los documentos que cumplen el query.
 
-#query and aggregations
-#We get aggregations for el documents that
-#match el query
+```json
 GET /libreria/_search
 {
   "query":   {
@@ -274,7 +294,9 @@ GET /libreria/_search
   }
 }
 
+```
 #obtener una agregacion por precio
+```json
 GET /libreria/_search
 {
   "query":   {
@@ -291,8 +313,11 @@ GET /libreria/_search
     }
   }
 }
+
+```
 #agregacion anidada precio promedio por color
 
+```json
 GET /libreria/_search
 {
   "query":   {
@@ -320,18 +345,22 @@ GET /libreria/_search
 }
 
 #Actualizar documentos
+```json
 POST /libreria/libros/1
 { "titulo": "el libro 1 updated", "precio": 11, "colores":["gris","purpura","azul","black"]}
 
 #Instruccion para actualizar
+```json
 POST /libreria/libros/2/_update
 {"doc":{"titulo": "el libro dos"}}
 
 #Elastic search no es tiene schemas
 #Tratara de inferir de un docu,ento si es un long un flotante o un double
 
+```json
 GET /libreria/_mapping
 
+```json
 PUT /libreros-famosos
 {
   "settings": {
@@ -374,7 +403,8 @@ PUT /libreros-famosos
     }
   }
 }
-
+```
+```json
 PUT /libreros-famosos/librero/1
 {
   "nombre": "Carlos Mario Gomez",
@@ -384,3 +414,6 @@ PUT /libreros-famosos/librero/1
     "lon":-74.04034138
   },
 "descripcion":"Una descripcion inventada de un señor que no existe."
+}
+```
+
