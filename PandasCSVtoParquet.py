@@ -39,3 +39,13 @@ df_plants_parquet
 df_plants_parquet_filtered = pq.read_table('C:\carlos\plants.parquet', columns=['tipo', 'nombre_comun']).to_pandas()
 df_plants_parquet_filtered
 
+from fastparquet import write
+write('C:\carlos\plants.parq', df)
+
+write('C:\carlos\plants2.parq', df2, row_group_offsets=[0, 1, 2],
+      compression='GZIP', file_scheme='hive')
+
+from fastparquet import ParquetFile
+pf = ParquetFile('C:\carlos\plants2.parq')
+df = pf.to_pandas()
+df
